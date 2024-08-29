@@ -1,19 +1,24 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoaderCircle } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import axios from "axios"
+import { useNavigate } from "react-router-dom" // Import useNavigate
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { toast } from "@/components/ui/use-toast"
+
 const FormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 })
+
 export default function LoginForm({ flip }) {
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate(); // Initialize navigate
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -24,10 +29,29 @@ export default function LoginForm({ flip }) {
 
   const onSubmit = async (data) => {
     setIsLoading(true)
-    console.log("enter the sigin")
-    setTimeout(() => {
+    try {
+      const response = await axios.post('https://ecommerce-backend-deploying.vercel.app/api/signin', {
+        email: data.email,
+        password: data.password
+      })
+      window.localStorage.setItem("token", response.data.token); 
+      toast({
+        title: "Sign in successful",
+        description: "Welcome back!",
+      })
+      
+      // Redirect to the dashboard
+      navigate("/dashboard");
+      
+    } catch (error) {
+      toast({
+        title: "Sign in failed",
+        description: error.response?.data?.message || "An error occurred during sign in",
+        variant: "destructive"
+      })
+    } finally {
       setIsLoading(false)
-    }, 1500)
+    }
   }
 
   return (
@@ -44,7 +68,7 @@ export default function LoginForm({ flip }) {
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-6">
-            <div className="rounded-md shadow-sm space-y-4"> {/* Corrected spacing */}
+            <div className="rounded-md shadow-sm space-y-4">
               <FormField
                 control={form.control}
                 name="email"

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+/* eslint-disable react/prop-types */
+import  { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../components/ui/table";
@@ -29,8 +30,7 @@ const cities = [
   { value: "1256237", label: "Kanpur" }
 ];
 
-
-const WeatherDashboard = () => {
+const Dashboard = () => {
   const [selectedCity, setSelectedCity] = useState(cities[0].value);
   const [currentWeather, setCurrentWeather] = useState(null);
   const [forecastData, setForecastData] = useState([]);
@@ -45,8 +45,8 @@ const WeatherDashboard = () => {
             units: 'metric',
           },
         });
-        
-        const forecastList = response.data.list;
+
+        const forecastList = response.data.list.slice(0, 16 * 8); // Extract data for 16 days (8 timestamps per day)
         const current = forecastList[0];
 
         setCurrentWeather({
@@ -56,7 +56,7 @@ const WeatherDashboard = () => {
           windSpeed: current.wind.speed
         });
 
-        const dailyForecast = forecastList.map(item => ({
+        const dailyForecast = forecastList.filter((_, index) => index % 8 === 0).map(item => ({
           date: new Date(item.dt * 1000).toLocaleDateString(),
           temp: item.main.temp,
           humidity: item.main.humidity,
@@ -114,7 +114,7 @@ const WeatherDashboard = () => {
 
       <Card className="mb-8 shadow-lg bg-white">
         <CardHeader className="bg-gradient-to-r from-green-400 to-blue-500 text-white">
-          <CardTitle className="text-2xl">15-Day Forecast</CardTitle>
+          <CardTitle className="text-2xl">16-Day Forecast</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="h-[400px]">
@@ -140,7 +140,7 @@ const WeatherDashboard = () => {
 
       <Card className="shadow-lg bg-white">
         <CardHeader className="bg-gradient-to-r from-purple-400 to-pink-500 text-white">
-          <CardTitle className="text-2xl">Detailed Forecast</CardTitle>
+          <CardTitle className="text-2xl">Detailed 16-Day Forecast</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="overflow-x-auto">
@@ -173,7 +173,7 @@ const WeatherDashboard = () => {
   );
 };
 
-export default WeatherDashboard;
+export default Dashboard;
 
 const MetricCard = ({ title, value, unit, icon: Icon, color }) => (
   <Card className="shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">

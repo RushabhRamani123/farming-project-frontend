@@ -1,30 +1,45 @@
-import { Bot } from 'lucide-react';
-import { LayoutDashboard } from 'lucide-react';
-import { Scan } from 'lucide-react';
-import { SquarePlus } from 'lucide-react';
+import {
+   
+    PanelsTopLeft,
+  } from "lucide-react";
+  import { Bot } from 'lucide-react';
+  import { Scan } from 'lucide-react';
+  import { Tractor } from 'lucide-react';
+  import { SendHorizontal } from 'lucide-react';
+  import { Sparkle } from 'lucide-react';
   const basePath = "/";
   
   export const sidebarItems = [
     {
       title: "Dashboard",
-      icon: LayoutDashboard,
+      icon: PanelsTopLeft,
       route: basePath,
     },
     {
       title: "Chatbot",
       icon: Bot,
-      route: '/about',
+      route: '/bot',
     },
     {
-      title: "ScanPlant",
+      title: "Scan",
       icon: Scan,
-      route: "drafts",
+      route: "/diseases",
     },
     {
-      title: "New User",
-      icon: SquarePlus,
-      route: "drafts",
+      title: "Yield",
+      icon: Tractor,
+      route: "/yield",
     },
-    
+    {
+      title: "Fertilizers",
+      icon: SendHorizontal,
+      route: "/fertilizers",
+    },
+    {
+      title: "Crop Prediction",
+      icon: Sparkle,
+      route: "/prediction",
+    },
+
   ];
   

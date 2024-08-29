@@ -1,8 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React from "react";
-import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import initials from "initials";
 import { Circle } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../../components/ui/accordion";
@@ -43,7 +42,7 @@ function SidebarItemWithChildren({ item, isCollapsed = false, getVariant }) {
           buttonVariants({ variant: "ghost", size: isCollapsed ? "icon" : "default" }),
           isCollapsed && "hide-accordion-icon",
           "flex items-center justify-between hover:no-underline py-2 w-full h-12",
-          isActive ? "bg-[white] text-black" : "text-black hover:bg-[white] hover:text-black"
+          isActive ? "bg-black text-white" : "text-black hover:bg-[white] hover:text-black"
         )}
       >
         {isCollapsed ? (
@@ -88,7 +87,8 @@ function SidebarItemWithChildren({ item, isCollapsed = false, getVariant }) {
               to={child.route || "#"}
               className={cn(
                 buttonVariants({ variant: getVariant(child.route), size: "default" }),
-                "flex items-center justify-start py-2 px-6 text-black hover:bg-[white]"
+                "flex items-center justify-start py-2 px-6",
+                currentPath.includes(child.route) ? "bg-black text-white" : "text-black hover:bg-[white] hover:text-black"
               )}
             >
               <Circle className={cn("mr-3 h-3 w-3")} />
@@ -103,15 +103,18 @@ function SidebarItemWithChildren({ item, isCollapsed = false, getVariant }) {
 }
 
 function CollapsedSidebar({ item, getVariant }) {
-  if (item.children) {
-    return <SidebarItemWithChildren item={item} isCollapsed getVariant={getVariant} />;
-  }
+  const currentPath = useLocation().pathname;
+  const isActive = currentPath.includes(item.route);
 
-  const variant = getVariant(item.route ?? "");
-  return (
+  return item.children ? (
+    <SidebarItemWithChildren item={item} isCollapsed getVariant={getVariant} />
+  ) : (
     <Tooltip delayDuration={0}>
       <TooltipTrigger asChild>
-        <Link to={item.route ?? "#"} className={cn(buttonVariants({ variant, size: "icon" }), "h-12 w-12 bg-[white] text-black hover:bg-emerald-500")}>
+        <Link
+          to={item.route ?? "#"}
+          className={cn(buttonVariants({ variant: getVariant(item.route), size: "icon" }), "h-12 w-12", isActive ? "bg-black text-white" : "bg-[white] text-black hover:bg-emerald-500")}
+        >
           <item.icon className="size-6" />
           <span className="sr-only">{item.title}</span>
         </Link>
@@ -125,19 +128,23 @@ function CollapsedSidebar({ item, getVariant }) {
 }
 
 function ExpandedSidebar({ item, getVariant }) {
-  if (item.children) {
-    return <SidebarItemWithChildren item={item} getVariant={getVariant} />;
-  }
+  const currentPath = useLocation().pathname;
+  const isActive = currentPath.includes(item.route);
 
-  const variant = getVariant(item.route ?? "");
-  return (
+  return item.children ? (
+    <SidebarItemWithChildren item={item} getVariant={getVariant} />
+  ) : (
     <Link
       to={item.route ?? "#"}
-      className={cn(buttonVariants({ variant, size: "default" }), "flex justify-start items-center text-black hover:bg-[white] h-12 text-lg")}
+      className={cn(
+        buttonVariants({ variant: getVariant(item.route), size: "default" }),
+        "flex justify-start items-center h-12 text-lg",
+        isActive ? "bg-black text-white" : "text-black hover:bg-[white] hover:text-black"
+      )}
     >
       <item.icon className="mr-3 size-6" />
       {item.title}
-      {item.label && <span className={cn("ml-auto text-emerald-300")}>{item.label}</span>}
+      {item.label && <span className="ml-auto text-emerald-300">{item.label}</span>}
     </Link>
   );
 }

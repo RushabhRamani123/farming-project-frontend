@@ -1,34 +1,34 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoaderCircle } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/use-toast"
 
-// Define the schema
+// Updated schema
 const FormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+  firstName: z.string().min(2, { message: "First name must be at least 2 characters" }),
+  lastName: z.string().min(2, { message: "Last name must be at least 2 characters" }),
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
   confirmPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
 }).refine(data => data.password === data.confirmPassword, {
   message: "Passwords do not match",
-  path: ["confirmPassword"], // Specify which field should show the error
+  path: ["confirmPassword"],
 })
 
 export default function SignupForm({flip}) {
   const [isLoading, setIsLoading] = useState(false)
 
-  // Initialize the form with react-hook-form and zod resolver
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -37,14 +37,28 @@ export default function SignupForm({flip}) {
 
   const onSubmit = async (data) => {
     setIsLoading(true)
-    // Simulate a signup request
-    setTimeout(() => {
+    try {
+      const response = await axios.post('https://ecommerce-backend-deploying.vercel.app/api/signup', {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password
+      })
+
       toast({
         title: "Signup successful",
         description: "Welcome aboard!",
       })
+      // You might want to handle the successful signup here (e.g., redirect to login page)
+    } catch (error) {
+      toast({
+        title: "Signup failed",
+        description: error.response?.data?.message || "An error occurred during signup",
+        variant: "destructive"
+      })
+    } finally {
       setIsLoading(false)
-    }, 1500)
+    }
   }
 
   return (
@@ -64,17 +78,36 @@ export default function SignupForm({flip}) {
             <div className="rounded-md shadow-sm -space-y-px">
               <FormField
                 control={form.control}
-                name="name"
+                name="firstName"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>First Name</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
-                        autoComplete="name"
-                        placeholder="Your name"
+                        autoComplete="given-name"
+                        placeholder="First name"
                         {...field}
                         className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                      />
+                    </FormControl>
+                    <FormMessage>{fieldState.error?.message}</FormMessage>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field, fieldState }) => (
+                  <FormItem>
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        autoComplete="family-name"
+                        placeholder="Last name"
+                        {...field}
+                        className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
                       />
                     </FormControl>
                     <FormMessage>{fieldState.error?.message}</FormMessage>
