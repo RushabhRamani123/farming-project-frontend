@@ -8,16 +8,12 @@ import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { toast } from "@/components/ui/use-toast"
-// Define the schema
 const FormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 })
-export default function LoginForm({flip}) {
-  
+export default function LoginForm({ flip }) {
   const [isLoading, setIsLoading] = useState(false)
-  // Initialize the form with react-hook-form and zod resolver
   const form = useForm({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -28,18 +24,14 @@ export default function LoginForm({flip}) {
 
   const onSubmit = async (data) => {
     setIsLoading(true)
-    // Simulate a login request
+    console.log("enter the sigin")
     setTimeout(() => {
-      toast({
-        title: "Login successful",
-        description: "Welcome back!",
-      })
       setIsLoading(false)
     }, 1500)
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen  sm:px-6 lg:px-8">
+    <div className="flex items-center justify-center min-h-screen sm:px-6 lg:px-8 " >
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
@@ -52,7 +44,7 @@ export default function LoginForm({flip}) {
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-6">
-            <div className="rounded-md shadow-sm -space-y-px">
+            <div className="rounded-md shadow-sm space-y-4"> {/* Corrected spacing */}
               <FormField
                 control={form.control}
                 name="email"
@@ -65,7 +57,7 @@ export default function LoginForm({flip}) {
                         autoComplete="email"
                         placeholder="email@example.com"
                         {...field}
-                        className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                        className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                       />
                     </FormControl>
                     <FormMessage>{fieldState.error?.message}</FormMessage>
@@ -84,7 +76,7 @@ export default function LoginForm({flip}) {
                         autoComplete="current-password"
                         placeholder="Password"
                         {...field}
-                        className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                        className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                       />
                     </FormControl>
                     <FormMessage>{fieldState.error?.message}</FormMessage>
@@ -95,7 +87,7 @@ export default function LoginForm({flip}) {
 
             <div className="flex items-center justify-between">
               <div className="text-sm">
-                <p href="#" className="font-medium text-primary hover:text-primary-dark">
+                <p className="font-medium text-primary hover:text-primary-dark">
                   Forgot your password? <span onClick={flip} className="text-[blue] cursor-pointer">Signup</span>
                 </p>
               </div>
@@ -103,10 +95,11 @@ export default function LoginForm({flip}) {
 
             <div>
               <Button
+                type="submit"
                 disabled={isLoading}
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
               >
-                {isLoading && <LoaderCircle className="mr-2 size-4 animate-spin" />}
+                {isLoading && <LoaderCircle className="mr-2 h-5 w-5 animate-spin" />}
                 Sign in
               </Button>
             </div>
