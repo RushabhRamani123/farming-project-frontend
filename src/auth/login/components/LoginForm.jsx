@@ -53,72 +53,71 @@ export default function LoginForm({ flip }) {
   }
 
   return (
-<div className="flex items-center justify-center min-h-screen bg-gray-100">
-  <div className="w-full max-w-lg p-10 space-y-8 bg-white rounded-lg shadow-lg">
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field, fieldState }) => (
-            <FormItem>
-              <FormLabel>Email address</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  autoComplete="email"
-                  placeholder="email@example.com"
-                  {...field}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 ease-in-out"
-                />
-              </FormControl>
-              <FormMessage className="text-red-500 mt-1">
-                {fieldState.error?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field, fieldState }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  autoComplete="current-password"
-                  placeholder="Password"
-                  {...field}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 ease-in-out"
-                />
-              </FormControl>
-              <FormMessage className="text-red-500 mt-1">
-                {fieldState.error?.message}
-              </FormMessage>
-            </FormItem>
-          )}
-        />
-        <div className="flex justify-between items-center">
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="flex items-center justify-center px-5 py-3 text-sm font-medium text-white bg-primary rounded-md shadow hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-200 ease-in-out"
-          >
-            {isLoading && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-            Sign in
-          </Button>
-          <p className="text-sm">
-            <span onClick={flip} className="text-primary hover:text-primary-dark cursor-pointer transition duration-200 ease-in-out">
-              Sign up
-            </span>
-          </p>
-        </div>
-      </form>
-    </Form>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormLabel>Email address</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    autoComplete="email"
+                    placeholder="email@example.com"
+                    {...field}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 ease-in-out"
+                  />
+                </FormControl>
+                <FormMessage className="text-red-500 mt-1">
+                  {fieldState.error?.message}
+                </FormMessage>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    autoComplete="current-password"
+                    placeholder="Password"
+                    {...field}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200 ease-in-out"
+                  />
+                </FormControl>
+                <FormMessage className="text-red-500 mt-1">
+                  {fieldState.error?.message}
+                </FormMessage>
+              </FormItem>
+            )}
+          />
+          <div className="flex justify-between items-center">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="flex items-center justify-center px-5 py-3 text-sm font-medium text-white bg-primary rounded-md shadow hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition duration-200 ease-in-out"
+            >
+              {isLoading && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
+              Sign in
+            </Button>
+            <p className="text-sm">
+              <span onClick={flip} className="text-primary hover:text-primary-dark cursor-pointer transition duration-200 ease-in-out">
+                Sign up
+              </span>
+            </p>
+          </div>
+        </form>
+      </Form>
+    </div>
   </div>
-</div>
-
   
   
   )
