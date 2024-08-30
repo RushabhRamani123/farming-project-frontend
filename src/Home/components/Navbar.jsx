@@ -9,7 +9,7 @@ function Navbar({handleLoginClick}) {
       style={{ backgroundImage: `url(${hero})` }}
     >
       <header className="absolute top-0 left-0 w-full flex items-center justify-between p-5 bg-black bg-opacity-30 z-10">
-        <div className="text-[#faf2e4] text-2xl font-bold">AgriVista</div>
+        <div className="text-[#faf2e4] text-2xl font-bold">AgriSmart</div>
         <nav className="flex items-center space-x-8">
           <ul className="flex space-x-6 text-[#faf2e4] text-lg">
             <li><ScrollLink to="home" smooth={true} duration={500} className="hover:text-[#f4d8b6] cursor-pointer">Home</ScrollLink></li>

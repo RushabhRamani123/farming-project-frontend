@@ -13,6 +13,8 @@ import { UserNav } from "./components/user-nav";
 import Dashboard from "./pages/Dashboard";
 import { Route, Routes } from "react-router-dom";
 import ChatbotUI from "./pages/chatbot";
+import  {CropSelectionForm} from "./pages/cropdetection";
+import logo from '../../public/logo32.png'
 const DraftsComponent = () => <div>Drafts Component</div>;
 const SentComponent = () => <div>Sent Component</div>;
 const JunkComponent = () => <div>Junk Component</div>;
@@ -43,11 +45,12 @@ export default function Layout({ children }) {
           }}
           className={cn("hidden lg:block", isCollapsed && "min-w-[50px] transition-all duration-300 ease-in-out")}
         >
-          <div className={cn("flex h-[52px] items-center justify-center", isCollapsed ? "h-[52px]" : "px-2")}>
-          Logo
+          <div className={cn("flex h-[52px] items-center justify-center", isCollapsed ? "h-[52px]" : "px-2 tex")}>
+          AgriSmart
           </div>
           <Separator />
-          <Sidebar isCollapsed={isCollapsed} />
+          <div className="h-[85vh]"><Sidebar isCollapsed={isCollapsed} /></div>
+          
         </ResizablePanel>
         <ResizableHandle className="hidden lg:flex" withHandle />
 
@@ -66,14 +69,14 @@ export default function Layout({ children }) {
             </div> 
           </div>
           <Separator />
-          <div className="p-4">
+          <div className="p-4 h-[80vh] overflow-y-auto">
           <Routes>
-      <Route path="/" element={<Dashboard />} />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/bot" element={<ChatbotUI/>} />
       <Route path="/diseases" element={<DraftsComponent />} />
-      <Route path="/yield" element={<SentComponent />} />
+      <Route path="/yield" element={<CropSelectionForm/>} />
       <Route path="/fertilizers" element={<JunkComponent />} />
-      <Route path="/prediction" element={<TrashComponent />} />
+      <Route path="/prediction" element={''} />
     </Routes>
             {children}
           </div>

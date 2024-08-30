@@ -7,7 +7,7 @@ import {
   import { Tractor } from 'lucide-react';
   import { SendHorizontal } from 'lucide-react';
   import { Sparkle } from 'lucide-react';
-  const basePath = "/";
+  const basePath = "/dashboard";
   
   export const sidebarItems = [
     {
@@ -21,25 +21,9 @@ import {
       route: '/bot',
     },
     {
-      title: "Scan",
-      icon: Scan,
-      route: "/diseases",
-    },
-    {
       title: "Yield",
       icon: Tractor,
       route: "/yield",
     },
-    {
-      title: "Fertilizers",
-      icon: SendHorizontal,
-      route: "/fertilizers",
-    },
-    {
-      title: "Crop Prediction",
-      icon: Sparkle,
-      route: "/prediction",
-    },
-
   ];
   

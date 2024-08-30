@@ -4,7 +4,7 @@ import Auth from './auth/index';
 import { Route, Routes } from 'react-router-dom';
 import PrivateRoute from './HOC/PrivateRoute';
 import Homepage from './Home/homepage';
-import NotFound from './NotFound/NotFound';
+// import NotFound from './NotFound/NotFound';
 
 function App() {
   const token = window.localStorage.getItem('token');  // Corrected this line
@@ -20,7 +20,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="*" element={<NotFound />} />
+          {/* <Route path="*" element={<NotFound />} /> */}
         </Routes>
       )}
     </>

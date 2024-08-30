@@ -3,7 +3,6 @@ import Navbar from "./components/Navbar";
 import {HeroScrollDemo} from "./components/Herosection";
 import Service from "./components/Service";
 import Testimonial from "./components/Testimonial";
-import Pricing from "./components/Pricing";
 
 function Homepage() {
   const navigate = useNavigate();
@@ -25,7 +24,6 @@ function Homepage() {
       {/* create the testimonial  */}
       <Testimonial />       
       {/* create the pricing section */}
-      <Pricing /> 
     </div>
   );
 }

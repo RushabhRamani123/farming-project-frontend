@@ -10,7 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "../../
 import useVariantBasedOnRoute from "../../hooks/useVariantBasedOnRoute";
 import { cn } from "../../lib/utils";
 import { sidebarItems } from "../../navigation/sidebar-items";
-
+import logo from '../../../public/logo32.png'
 function SidebarHeading({ heading, isMobileSidebar = false, isCollapsed }) {
   return isCollapsed ? (
     <Tooltip delayDuration={0}>
@@ -161,28 +161,32 @@ export default function Sidebar({ isCollapsed, isMobileSidebar = false }) {
         <div 
           data-collapsed={isCollapsed} 
           className={cn(
-            "group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2 bg-[white] text-black",
+            "group flex flex-col gap-2 py-2 data-[collapsed=true]:py-2 bg-[white] text-black",
             isCollapsed ? "w-16" : "w-64",
-            "transition-all duration-300 ease-in-out"
+            "transition-all duration-300 ease-in-out",
+            "h-screen overflow-y-auto"
           )}
         >
+          {/* Add logo at the top of the sidebar */}
+                   
           <nav
             className={cn(
               "grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2",
-              isMobileSidebar && "p-0"
+              isMobileSidebar && "p-0",
+              "max-h-full"
             )}
           >
-            {sidebarItems.map((item) => {
+            {sidebarItems.map((item, index) => {
               if (isNavItem(item)) {
                 if (isCollapsed) {
-                  return <CollapsedSidebar key={item.title} item={item} getVariant={getVariant} />;
+                  return <CollapsedSidebar key={item.title || index} item={item} getVariant={getVariant} />;
                 }
-                return <ExpandedSidebar key={item.title} item={item} getVariant={getVariant} />;
+                return <ExpandedSidebar key={item.title || index} item={item} getVariant={getVariant} />;
               }
               return (
                 <SidebarHeading
                   isMobileSidebar={isMobileSidebar}
-                  key={item.heading}
+                  key={item.heading || index}
                   heading={item.heading}
                   isCollapsed={isCollapsed}
                 />
@@ -194,3 +198,4 @@ export default function Sidebar({ isCollapsed, isMobileSidebar = false }) {
     </TooltipProvider>
   );
 }
+

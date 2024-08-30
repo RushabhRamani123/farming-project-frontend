@@ -80,8 +80,8 @@ const ChatbotUI = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen ">
-      <ScrollArea className="flex-grow p-6 overflow-auto">
+    <div className="flex flex-col  ">
+      <ScrollArea className="h-[70vh] p-6 overflow-auto">
         {messages.map((message) => (
           <div key={message.id} className={`mb-4 ${message.isBot ? 'text-left' : 'text-right'}`}>
             <div className={`inline-block p-3 rounded-lg ${message.isBot ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'} max-w-[80%]`}>
