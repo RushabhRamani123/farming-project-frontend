@@ -6,7 +6,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Mic } from "lucide-react";
 import EnhancedSearchInput from "./Input";
-
+import axios from "axios";
+import { Select, SelectTrigger } from "@radix-ui/react-select";
+import {
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 const initialMessage = {
   id: 1,
   text: "👋 Hi there! I'm your agricultural assistant. I'm here to help with any farming, crop, or gardening questions you might have!",
@@ -61,7 +67,10 @@ const ChatbotUI = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
-
+  const [language, setLanguage] = useState("english");
+  const handleLanguageChange = (value) => {
+    setLanguage(value);
+  };
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -70,26 +79,72 @@ const ChatbotUI = () => {
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
+const handleDataFromChild =  async (data)=>{
+  console.log(data);
+  if (data.trim()) {
+    // console.log(data);
+    
+    const userMessage = {
+      id: messages.length + 1,
+      text: data,
+      isBot: false,
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    console.log(messages)
+    // setInput("");
+    
+    setIsLoading(true);
+const response = await axios.post("https://mumbaihacks-chatdisease.onrender.com/chat", {
+  query: data,
+  language: language.toLowerCase().slice(0,2)
+})
+setMessages((prev) => [...prev , {
+  id: messages.length + 1,
+      text: response.data.response,
+      isBot: true,
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+}])
+setIsLoading(false);
+// setMessages({
+//   id: messages.length + 1,
+//       text: response.data.response,
+//       isBot: true,
+//       timestamp: new Date().toLocaleTimeString([], {
+//         hour: "2-digit",
+//         minute: "2-digit",
+//       }),
+// })
+console.log("response" , response)
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (input.trim()) {
-      const userMessage = {
-        id: messages.length + 1,
-        text: input,
-        isBot: false,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      };
-      setMessages((prevMessages) => [...prevMessages, userMessage]);
-      setInput("");
-      setIsLoading(true);
+  }
+}
+  // const onSubmit = async (data) => {
+  //   // e.preventDefault();
+  //   if (data.trim()) {
+  //     const userMessage = {
+  //       id: messages.length + 1,
+        
+  //       text: input,
+  //       isBot: false,
+  //       timestamp: new Date().toLocaleTimeString([], {
+  //         hour: "2-digit",
+  //         minute: "2-digit",
+  //       }),
+  //     };
+  //     setMessages((prevMessages) => [...prevMessages, userMessage]);
+  //     console.log(messages)
+  //     setInput("");
+  //     setIsLoading(true);
 
-      // ... rest of the handleSubmit function remains the same
-    }
-  };
+  //   }
+  // };
 
   const MessageBubble = ({ message }) => (
     <div
@@ -151,7 +206,7 @@ const ChatbotUI = () => {
   return (
     <div className="h-[100vh]  bg-gray-50 flex flex-col">
       <div className="h-full flex flex-col">
-        <div className="bg-green-700 text-white py-2 px-6 shadow-lg">
+        <div className="flex  justify-between bg-green-700 text-white py-2 px-6 shadow-lg">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
               <Sprout className="w-6 h-6" />
@@ -162,7 +217,19 @@ const ChatbotUI = () => {
                 Here to help with your farming queries
               </p>
             </div>
+
           </div>
+          <Select value={language} onValueChange={handleLanguageChange}>
+                <SelectTrigger className="w-[120px] bg-white text-emerald-800">
+                  <SelectValue placeholder="Language" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="english">English</SelectItem>
+                  <SelectItem value="hindi">Hindi</SelectItem>
+                  <SelectItem value="gujarati">Gujarati</SelectItem>
+                  <SelectItem value="marathi">Marathi</SelectItem>
+                </SelectContent>
+              </Select>
         </div>
         {/* Chat Area */}
         <ScrollArea className="flex-grow">
@@ -179,7 +246,7 @@ const ChatbotUI = () => {
         </ScrollArea>
 
         {/* Input Area */}
-       <EnhancedSearchInput /> 
+       <EnhancedSearchInput sendDataToParent={handleDataFromChild} /> 
       </div>
     </div>
   );

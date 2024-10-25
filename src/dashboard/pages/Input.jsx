@@ -1,32 +1,35 @@
-import { forwardRef, useEffect, useState } from 'react';
+import {  useEffect, useState } from 'react';
 import { Search, Send, Mic, MicOff, Loader } from 'lucide-react';
-import PropTypes from 'prop-types';
 
-const EnhancedSearchInput = forwardRef(({ 
-  input = '', 
-  setInput, 
-  handleSubmit,
-  placeholder = "Ask about crops, farming techniques, or any agricultural queries...",
-  className = "",
-}, ref) => {
+const EnhancedSearchInput = ({sendDataToParent}) => {
+  // State Management
+  const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [recognition,setRecognition] = useState(null);
+  const [recognition, setRecognition] = useState(null);
   const [interimTranscript, setInterimTranscript] = useState('');
-  const [displayValue,setDisplayed]=useState(''); 
-  const startVoiceInput = () => {
-    setError(null);
+  const [displayValue, setDisplayValue] = useState('');
+  const [messageQueue, setMessageQueue] = useState([]);
+
+  // Handle Voice Recognition Setup
+  const setupRecognition = () => {
     if (!('webkitSpeechRecognition' in window)) {
-      setError('Voice input is not supported in your browser');
-      return;
+      throw new Error('Voice input is not supported in your browser');
     }
 
+    const newRecognition = new window.webkitSpeechRecognition();
+    newRecognition.continuous = true;
+    newRecognition.interimResults = true;
+    newRecognition.lang = 'en-US';
+    return newRecognition;
+  };
+
+  // Start Voice Input
+  const startVoiceInput = () => {
+    setError(null);
     try {
-      const newRecognition = new window.webkitSpeechRecognition();
-      newRecognition.continuous = true;  // Enable continuous recording
-      newRecognition.interimResults = true;  // Get results as user speaks
-      newRecognition.lang = 'en-US';
+      const newRecognition = setupRecognition();
 
       newRecognition.onstart = () => {
         setIsListening(true);
@@ -37,23 +40,20 @@ const EnhancedSearchInput = forwardRef(({
         let finalTranscript = '';
         let currentInterimTranscript = '';
 
-        // Collect all results, both interim and final
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const transcript = event.results[i][0].transcript;
           if (event.results[i].isFinal) {
             finalTranscript += transcript + ' ';
+            // Add final transcript to message queue
+            setMessageQueue(prev => [...prev, transcript.trim()]);
           } else {
             currentInterimTranscript += transcript;
           }
         }
 
-        // Update final transcript
         if (finalTranscript) {
-          const newInput = ((input || '') + ' ' + finalTranscript).trim();
-          setInput(newInput);
+          setInput(prev => `${prev} ${finalTranscript}`.trim());
         }
-
-        // Update interim transcript
         setInterimTranscript(currentInterimTranscript);
       };
 
@@ -63,9 +63,13 @@ const EnhancedSearchInput = forwardRef(({
       };
 
       newRecognition.onend = () => {
-        // Only reset isListening if we're not intentionally stopping
         if (isListening) {
-          newRecognition.start();  // Restart if it ends unintentionally
+          try {
+            newRecognition.start();
+          } catch (err) {
+            setError('Failed to restart voice recognition');
+            stopVoiceInput();
+          }
         }
       };
 
@@ -77,6 +81,7 @@ const EnhancedSearchInput = forwardRef(({
     }
   };
 
+  // Stop Voice Input
   const stopVoiceInput = () => {
     if (recognition) {
       recognition.stop();
@@ -84,8 +89,16 @@ const EnhancedSearchInput = forwardRef(({
     }
     setIsListening(false);
     setInterimTranscript('');
+    
+    // Process any remaining messages in the queue
+    if (messageQueue.length > 0) {
+      const fullMessage = messageQueue.join(' ').trim();
+      setInput(prev => `${prev} ${fullMessage}`.trim());
+      setMessageQueue([]);
+    }
   };
 
+  // Toggle Voice Input
   const handleVoiceInput = () => {
     if (isListening) {
       stopVoiceInput();
@@ -94,43 +107,69 @@ const EnhancedSearchInput = forwardRef(({
     }
   };
 
-  const onSubmit = async (e) => {
+  // Handle Form Submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-    
-    if (!input.trim()) {
-        if(displayValue!=0)
-            handleSubmit(displayValue);
+    const submitText = displayValue.trim() || input.trim();
+    console.log('k')
+    if (!submitText) {
       setError('Please enter some text before submitting');
       return;
     }
 
     setIsLoading(true);
+
     try {
-      await handleSubmit(e);
+      sendDataToParent(submitText); 
+      console.log(submitText); 
+      setInput('');
+      setDisplayValue('');
+      setInterimTranscript('');
+      setMessageQueue([]);
     } catch (err) {
       setError(err.message || 'An error occurred while submitting');
     } finally {
       setIsLoading(false);
     }
   };
-useEffect(()=>{
-    if(interimTranscript){
-        setDisplayed(`${input || ''} ${interimTranscript}`)
+
+  // Handle Input Change
+  const handleInputChange = (e) => {
+    setError(null);
+    const newValue = e.target.value;
+    setInput(newValue);
+    setDisplayValue(newValue);
+  };
+
+  // Update Display Value
+  useEffect(() => {
+    if (interimTranscript || input) {
+      setDisplayValue(`${input} ${interimTranscript}`.trim());
+    } else {
+      setDisplayValue('');
     }
-},[interimTranscript,input])
+  }, [interimTranscript, input]);
+
+  // Cleanup Effect
+  useEffect(() => {
+    return () => {
+      if (recognition) {
+        recognition.stop();
+      }
+    };
+  }, [recognition]);
 
   return (
-    <div className={`w-full bg-gradient-to-b from-green-50 to-white border-t shadow-sm ${className}`}>
+    <div className={`w-full bg-gradient-to-b from-green-50 to-white border-t shadow-sm `}>
       <div className="max-w-4xl mx-auto p-6">
-        <form onSubmit={onSubmit} className="relative">
+        <form onSubmit={handleSubmit} className="relative">
           <div className="relative group flex items-center">
             <div className="absolute left-4 text-green-600 pointer-events-none">
               <Search size={20} className="group-focus-within:text-green-700" />
             </div>
             
             <input
-              ref={ref}
               type="text"
               className={`w-full pl-12 pr-24 py-3.5 rounded-2xl border 
                        ${error ? 'border-red-200 focus:ring-red-500/20 focus:border-red-500' 
@@ -140,12 +179,9 @@ useEffect(()=>{
                        focus:outline-none focus:ring-2
                        hover:border-green-200 hover:shadow-md
                        disabled:bg-gray-50 disabled:cursor-not-allowed`}
-              placeholder={placeholder}
+              placeholder={'dg'}
               value={displayValue}
-              onChange={(e) => {
-                setError(null);
-                setInput(e.target.value);
-              }}
+              onChange={handleInputChange}
               disabled={isLoading}
               aria-invalid={!!error}
               aria-describedby={error ? "input-error" : undefined}
@@ -200,12 +236,9 @@ useEffect(()=>{
               </p>
             ) : (
               <p className="text-xs text-gray-500">
-                Try asking about sustainable farming practices, crop diseases, or soil management
-              </p>
-            )}
-            {isListening && (
-              <p className="text-xs text-red-500 animate-pulse">
-                Listening... Click the mic icon to stop recording
+                {isListening 
+                  ? 'Listening... Click the mic icon to stop recording'
+                  : 'Try asking about sustainable farming practices, crop diseases, or soil management'}
               </p>
             )}
           </div>
@@ -213,22 +246,5 @@ useEffect(()=>{
       </div>
     </div>
   );
-});
-
-EnhancedSearchInput.displayName = 'EnhancedSearchInput';
-
-EnhancedSearchInput.propTypes = {
-  input: PropTypes.string,
-  setInput: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  placeholder: PropTypes.string,
-  className: PropTypes.string,
 };
-
-EnhancedSearchInput.defaultProps = {
-  input: '',
-  placeholder: "Ask about crops, farming techniques, or any agricultural queries...",
-  className: '',
-};
-
 export default EnhancedSearchInput;
