@@ -14,15 +14,13 @@ import axios from "axios";
 const LoadingAnimation = () => (
   <div className="flex items-center justify-center p-8">
     <div className="relative">
-      <div className="w-1 h-24 bg-emerald-300 absolute left-1/2 transform -translate-x-1/2 bottom-0 animate-pulse" />
       {[...Array(3)].map((_, i) => (
         <div
           key={i}
-          className={`absolute bottom-${8 + i * 8} ${
-            i % 2 === 0 ? "-left-4" : "-right-4"
-          } w-6 h-6`}
+          className="absolute left-1/2 transform -translate-x-1/2 w-6 h-6"
           style={{
-            animation: `bounce ${1 + i * 0.2}s infinite`,
+            bottom: '2rem',
+            animation:` bounce ${1 + i * 0.2}s infinite`,
             animationDelay: `${i * 0.2}s`,
           }}
         >
@@ -37,9 +35,8 @@ const LoadingAnimation = () => (
         Analyzing Plant...
       </div>
     </div>
-  </div>
+  </div>
 );
-
 const MedicalImageAnalysis = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);

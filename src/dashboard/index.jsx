@@ -8,6 +8,7 @@ import {
   Flashlight,
   User,
   Power,
+  Warehouse,
 } from "lucide-react";
 import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -19,6 +20,7 @@ import { CloudSunRain } from "lucide-react";
 import { Sprout } from "lucide-react";
 import MedicalImageAnalysis from "./pages/diseasesDetection";
 import CropRecommend from "./pages/CropRecommendation/CropRecommend";
+import ContactsPage from "./pages/Contacts/Contact";
 function Navbar() {
   const navigate = useNavigate(); // Initialize useNavigate hook at the top level
   const navRef = useRef(null);
@@ -32,6 +34,11 @@ function Navbar() {
       label: "Crop Recommendation",
       path: "/crop-recommendation",
       icon: Flashlight,
+    },
+    {
+      label: "Inventory",
+      path: "/inventory",
+      icon: Warehouse,
     },
   ];
   const [isExpanded, setisExpanded] = useState(false);
@@ -198,6 +205,7 @@ function Navbar() {
             <Route path="/diseases" element={<MedicalImageAnalysis />} />
             <Route path="/profile" element={<FarmerProfile />} />
             <Route path="/crop-recommendation" element={<CropRecommend />} />
+            <Route path="/inventory" element={<ContactsPage />} />
           </Routes>
         </main>
       </ScrollArea>
