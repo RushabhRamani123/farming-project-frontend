@@ -15,9 +15,10 @@ import Dashboard from "./pages/Homepage/Dashboard";
 import ChatbotUI from "./pages/chatbot";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import FarmerProfile from "./pages/ProfilePage";
-import { CloudSunRain } from 'lucide-react';
-import { Sprout } from 'lucide-react';
+import { CloudSunRain } from "lucide-react";
+import { Sprout } from "lucide-react";
 import MedicalImageAnalysis from "./pages/diseasesDetection";
+import CropRecommend from "./pages/CropRecommendation/CropRecommend";
 function Navbar() {
   const navigate = useNavigate(); // Initialize useNavigate hook at the top level
   const navRef = useRef(null);
@@ -27,6 +28,11 @@ function Navbar() {
     { label: "Diseases", path: "/diseases", icon: Sprout },
     { label: "Yield", path: "/yield", icon: Crop },
     { label: "Fertilizers", path: "/fertilizers", icon: Flashlight },
+    {
+      label: "Crop Recommendation",
+      path: "/crop-recommendation",
+      icon: Flashlight,
+    },
   ];
   const [isExpanded, setisExpanded] = useState(false);
   const [activeTab, setactiveTab] = useState(navItems[0].label);
@@ -37,7 +43,7 @@ function Navbar() {
 
   const handleLogout = () => {
     window.localStorage.removeItem("token");
-    navigate('/')
+    navigate("/");
     window.location.reload();
   };
 
@@ -189,12 +195,13 @@ function Navbar() {
               path="/fertilizers"
               element={<div className="p-6">Fertilizers Page</div>}
             />
-            <Route path="/diseases" element={<MedicalImageAnalysis/>} />
+            <Route path="/diseases" element={<MedicalImageAnalysis />} />
             <Route path="/profile" element={<FarmerProfile />} />
+            <Route path="/crop-recommendation" element={<CropRecommend />} />
           </Routes>
         </main>
       </ScrollArea>
     </div>
   );
 }
-export default Navbar; 
+export default Navbar;
