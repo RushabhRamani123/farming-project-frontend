@@ -1,95 +1,201 @@
-/* eslint-disable react/prop-types */
-import { useState } from "react";
-import { Menu } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../components/ui/resizable";
-import { Separator } from "../components/ui/separator";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../components/ui/sheet";
-import useRouteChange from "../hooks/useRouteChange";
-import useScreenSize from "../hooks/useScreenSize";
-import { cn } from "../lib/utils";
-import Sidebar from "./components/sidebar";
-import { UserNav } from "./components/user-nav";
-import Dashboard from "./pages/Dashboard";
-import { Route, Routes } from "react-router-dom";
+import React, { useRef, useState } from "react";
+import {
+  ChevronRight,
+  ChevronLeft,
+  Bot,
+  Worm,
+  Crop,
+  Flashlight,
+  User,
+  Power,
+} from "lucide-react";
+import { Route, Routes, Link, useNavigate } from "react-router-dom";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { DashIcon } from "@radix-ui/react-icons";
+import Dashboard from "./pages/Homepage/Dashboard";
 import ChatbotUI from "./pages/chatbot";
-import  {CropSelectionForm} from "./pages/cropdetection";
-import logo from '../../public/logo32.png'
-const DraftsComponent = () => <div>Drafts Component</div>;
-const SentComponent = () => <div>Sent Component</div>;
-const JunkComponent = () => <div>Junk Component</div>;
-const TrashComponent = () => <div>Trash Component</div>;
-export default function Layout({ children }) {
-  const isMediumOrSmaller = useScreenSize();
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import FarmerProfile from "./pages/ProfilePage";
+import { CloudSunRain } from 'lucide-react';
+import { Sprout } from 'lucide-react';
+import MedicalImageAnalysis from "./pages/diseasesDetection";
+function Navbar() {
+  const navigate = useNavigate(); // Initialize useNavigate hook at the top level
+  const navRef = useRef(null);
+  const navItems = [
+    { label: "Home", path: "/", icon: CloudSunRain },
+    { label: "Chatbot", path: "/bot", icon: Bot },
+    { label: "Diseases", path: "/diseases", icon: Sprout },
+    { label: "Yield", path: "/yield", icon: Crop },
+    { label: "Fertilizers", path: "/fertilizers", icon: Flashlight },
+  ];
+  const [isExpanded, setisExpanded] = useState(false);
+  const [activeTab, setactiveTab] = useState(navItems[0].label);
 
-  useRouteChange(() => {
-    setIsMobileNavOpen(false);
-  });
+  const handletogglebar = () => {
+    setisExpanded(!isExpanded);
+  };
+
+  const handleLogout = () => {
+    window.localStorage.removeItem("token");
+    navigate('/')
+    window.location.reload();
+  };
 
   return (
-    <main>
-      <ResizablePanelGroup direction="horizontal" className="min-h-screen items-stretch">
-        <ResizablePanel
-          defaultSize={18}
-          collapsedSize={4}
-          collapsible
-          minSize={18}
-          maxSize={18}
-          onCollapse={() => {
-            setIsCollapsed(true);
-          }}
-          onExpand={() => {
-            setIsCollapsed(false);
-          }}
-          className={cn("hidden lg:block", isCollapsed && "min-w-[50px] transition-all duration-300 ease-in-out")}
+    <div className="flex h-screen bg-gray-100">
+      <div
+        ref={navRef}
+        className={`h-screen bg-gray-50 flex flex-col border-r bg-gradient-to-r from-lightBlue-400 to-blue-800 shadow-md transition-all duration-300 ease-in-out fixed top-0 left-0 ${
+          isExpanded ? "w-64" : "w-20"
+        } z-20`}
+      >
+        {/* Toggle Button */}
+        <button
+          onClick={handletogglebar}
+          className="absolute -right-3 top-20 transform bg-white rounded-full p-1 border border-gray-300 z-20 shadow-md hover:bg-gray-100 transition-colors duration-200"
         >
-          <div className={cn("flex h-[52px] items-center justify-center", isCollapsed ? "h-[52px]" : "px-2 tex")}>
-          AgriSmart
-          </div>
-          <Separator />
-          <div className="h-[85vh]"><Sidebar isCollapsed={isCollapsed} /></div>
-          
-        </ResizablePanel>
-        <ResizableHandle className="hidden lg:flex" withHandle />
+          {isExpanded ? (
+            <ChevronLeft
+              size={20}
+              strokeWidth={1.5}
+              className="text-gray-600"
+            />
+          ) : (
+            <ChevronRight
+              size={20}
+              strokeWidth={1.5}
+              className="text-gray-600"
+            />
+          )}
+        </button>
 
-        <ResizablePanel defaultSize={!isMediumOrSmaller ? 82 : 100}>
-          <div className="flex items-center justify-between px-4 py-2 lg:justify-end">
-            <Button
-              onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
-              variant="default"
-              className="size-9 p-1 md:flex lg:hidden"
+        {/* Logo */}
+        <div className="flex-shrink-0 flex items-center justify-center h-16 border-b border-gray-200">
+          <div className="h-10 w-10 bg-green-200 rounded-md border border-green-300 flex items-center justify-center">
+            <span className="text-green-800 font-bold text-lg">L</span>
+          </div>
+        </div>
+
+        {/* Nav Container with flex-col */}
+        <div className="flex flex-col h-full">
+          {/* Nav Items */}
+          <nav className="flex flex-col items-center space-y-1 py-4">
+            {navItems.map((item, index) => (
+              <React.Fragment key={index}>
+                {index === 3 || index === 6 || index === 9 ? (
+                  <div
+                    className={`my-2 h-px bg-gray-300 ${
+                      isExpanded ? "w-52" : "w-10"
+                    }`}
+                  ></div>
+                ) : null}
+                <Link
+                  to={item.path}
+                  className={`relative flex items-center hover:bg-gray-100 transition-colors duration-200 rounded-md
+                    ${
+                      isExpanded
+                        ? "w-52 justify-start px-4"
+                        : "w-14 justify-center"
+                    }
+                    ${
+                      activeTab === item.label
+                        ? "text-blue-600"
+                        : "text-gray-600"
+                    }
+                    py-3`}
+                  onClick={() => setactiveTab(item.label)}
+                >
+                  <item.icon
+                    size={20}
+                    strokeWidth={1.5}
+                    className={
+                      activeTab === item.label
+                        ? "text-blue-600"
+                        : "text-gray-500"
+                    }
+                  />
+                  {isExpanded && (
+                    <span className="ml-4 text-sm font-medium whitespace-nowrap overflow-hidden">
+                      {item.label}
+                    </span>
+                  )}
+                </Link>
+              </React.Fragment>
+            ))}
+          </nav>
+
+          {/* Spacer */}
+          <div className="flex-grow"></div>
+
+          {/* Avatar section */}
+          <div className="flex flex-col items-center justify-center gap-3">
+            <button
+              onClick={handleLogout}
+              className="hover:bg-gray-100 p-2 rounded-full transition-colors duration-200"
             >
-              <Menu className="size-6" />
-            </Button>
+              <Power
+                size={20}
+                strokeWidth={1.5}
+                className="text-red-700 cursor-pointer"
+              />
+            </button>
 
-            <div className="flex gap-2">
-              <UserNav />
-            </div> 
+            <Link to={"/profile"}>
+              {" "}
+              <div className="p-4 border-t border-gray-200">
+                <div
+                  className={`flex items-center ${
+                    isExpanded ? "px-4" : "justify-center"
+                  }`}
+                >
+                  <Avatar className="h-10 w-10 border-2 border-white">
+                    <AvatarImage
+                      src="https://wp.alithemes.com/html/evara/evara-frontend/assets/imgs/page/avatar-6.jpg"
+                      alt="User avatar"
+                    />
+                    <AvatarFallback>
+                      <User className="h-6 w-6 text-gray-400" />
+                    </AvatarFallback>
+                  </Avatar>
+                  {isExpanded && (
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-gray-100">
+                        John Doe
+                      </p>
+                      <p className="text-xs text-gray-300">john@example.com</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Link>
           </div>
-          <Separator />
-          <div className="p-4 h-[80vh] overflow-y-auto">
+        </div>
+      </div>
+
+      <ScrollArea
+        className={`flex-1 overflow-y-hidden transition-all duration-300 ${
+          isExpanded ? "ml-64" : "ml-20"
+        }`}
+      >
+        <main>
           <Routes>
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/bot" element={<ChatbotUI/>} />
-      <Route path="/diseases" element={<DraftsComponent />} />
-      <Route path="/yield" element={<CropSelectionForm/>} />
-      <Route path="/fertilizers" element={<JunkComponent />} />
-      <Route path="/prediction" element={''} />
-    </Routes>
-            {children}
-          </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
-      <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
-        <SheetContent className="px-2 py-3" side="left">
-          <SheetHeader>
-            <SheetTitle className="text-left">Studio Admin</SheetTitle>
-          </SheetHeader>
-          <Sidebar isMobileSidebar isCollapsed={false} />
-        </SheetContent>
-      </Sheet>
-    </main>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/bot" element={<ChatbotUI />} />
+            <Route
+              path="/yield"
+              element={<div className="p-6">Yield Page</div>}
+            />
+            <Route
+              path="/fertilizers"
+              element={<div className="p-6">Fertilizers Page</div>}
+            />
+            <Route path="/diseases" element={<MedicalImageAnalysis/>} />
+            <Route path="/profile" element={<FarmerProfile />} />
+          </Routes>
+        </main>
+      </ScrollArea>
+    </div>
   );
 }
+export default Navbar; 

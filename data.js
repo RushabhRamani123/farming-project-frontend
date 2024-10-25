@@ -1,0 +1,22 @@
+export const cities = [
+    { value: "1273294", label: "Delhi" },
+    { value: "1261481", label: "Mumbai" },
+    { value: "1277333", label: "Bangalore" },
+    { value: "1275004", label: "Kolkata" },
+    { value: "1275339", label: "Chennai" },
+    { value: "1264527", label: "Hyderabad" },
+    { value: "1270642", label: "Pune" },
+    { value: "1269843", label: "Jaipur" },
+    { value: "1262180", label: "Lucknow" },
+    { value: "1273874", label: "Ahmedabad" },
+    { value: "1260086", label: "Surat" },
+    { value: "1264728", label: "Indore" },
+    { value: "1259229", label: "Nagpur" },
+    { value: "1258986", label: "Patna" },
+    { value: "1279233", label: "Thane" },
+    { value: "1271308", label: "Bhopal" },
+    { value: "1255364", label: "Ludhiana" },
+    { value: "1267995", label: "Agra" },
+    { value: "1269515", label: "Gurgaon" },
+    { value: "1256237", label: "Kanpur" }
+  ];

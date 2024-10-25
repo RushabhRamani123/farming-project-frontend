@@ -5,6 +5,7 @@ import { Route, Routes } from 'react-router-dom';
 import PrivateRoute from './HOC/PrivateRoute';
 import Homepage from './Home/homepage';
 // import NotFound from './NotFound/NotFound';
+import 'regenerator-runtime/runtime'
 
 function App() {
   const token = window.localStorage.getItem('token');  // Corrected this line
