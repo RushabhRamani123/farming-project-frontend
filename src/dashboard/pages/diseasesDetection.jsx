@@ -1,22 +1,36 @@
-import React, { useState } from 'react';
-import { Upload, AlertCircle, Leaf, User } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from "react";
+import { Upload, AlertCircle, Leaf, User } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import axios from "axios";
 
 const LoadingAnimation = () => (
   <div className="flex items-center justify-center p-8">
     <div className="relative">
-      <div className="w-1 h-24 bg-emerald-300 absolute left-1/2 transform -translate-x-1/2 bottom-0 animate-pulse"/>
+      <div className="w-1 h-24 bg-emerald-300 absolute left-1/2 transform -translate-x-1/2 bottom-0 animate-pulse" />
       {[...Array(3)].map((_, i) => (
-        <div 
-          key={i} 
-          className={`absolute bottom-${8 + i * 8} ${i % 2 === 0 ? '-left-4' : '-right-4'} w-6 h-6`}
-          style={{ 
+        <div
+          key={i}
+          className={`absolute bottom-${8 + i * 8} ${
+            i % 2 === 0 ? "-left-4" : "-right-4"
+          } w-6 h-6`}
+          style={{
             animation: `bounce ${1 + i * 0.2}s infinite`,
-            animationDelay: `${i * 0.2}s`
+            animationDelay: `${i * 0.2}s`,
           }}
         >
-          <Leaf className={`text-emerald-500 transform ${i % 2 === 0 ? 'rotate-[-45deg]' : 'rotate-45deg]'}`}/>
+          <Leaf
+            className={`text-emerald-500 transform ${
+              i % 2 === 0 ? "rotate-[-45deg]" : "rotate-45deg]"
+            }`}
+          />
         </div>
       ))}
       <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap text-emerald-600 font-medium">
@@ -32,79 +46,114 @@ const MedicalImageAnalysis = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [language, setLanguage] = useState("english");
+
+  const handleLanguageChange = (value) => {
+    setLanguage(value);
+  };
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     setError(null);
-    
+
     if (file) {
-      if (!file.type.startsWith('image/')) {
-        setError('Please upload an image file');
+      if (!file.type.startsWith("image/")) {
+        setError("Please upload an image file");
         return;
       }
-      
+
       setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
       };
       reader.readAsDataURL(file);
-      
-      setMessages(prev => [...prev, {
-        type: 'user',
-        content: `Uploaded: ${file.name}`
-      }]);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "user",
+          content: `Uploaded: ${file.name}`,
+        },
+      ]);
     }
   };
 
   const handleAnalyze = async () => {
     if (!selectedFile) {
-      setError('Please select an image first');
+      setError("Please select an image first");
       return;
     }
 
     setLoading(true);
     setError(null);
 
-    setTimeout(() => {
-      const analysisResult = {
-        disease: 'Sample Disease',
-        confidence: '85%',
-        recommendations: [
-          'Consult with a plant specialist',
-          'Adjust watering schedule',
-          'Monitor leaf growth'
-        ]
-      };
-      
-      setMessages(prev => [...prev, {
-        type: 'bot',
-        content: `Analysis Results:\n• Condition: ${analysisResult.disease}\n• Confidence: ${analysisResult.confidence}\n\nRecommendations:\n${analysisResult.recommendations.map(rec => `• ${rec}`).join('\n')}`
-      }]);
+    const formData = new FormData();
+    formData.append("image", selectedFile);
+    formData.append("language", language.toLowerCase().slice(0, 2));
+    try {
+      const response = await axios.post(
+        "https://mumbaihacks-chatdisease.onrender.com/classify_plant_disease",
+        formData
+      );
+
+      let diagnosis = response.data.diagnosis;
+      if (diagnosis) {
+        diagnosis = diagnosis.replace(/\*/g, "").replace(/\s+/g, " ").trim();
+      }
+
+      console.log(diagnosis);
+      setMessages(() => [
+        {
+          type: "bot",
+          content: diagnosis,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error analyzing image:", error);
+      setError("Failed to analyze the image. Please try again.");
+    } finally {
       setLoading(false);
-    }, 2000);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white py-8">
       <div className="max-w-5xl mx-auto px-4">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-emerald-800 flex items-center justify-center gap-2">
-            <Leaf className="h-6 w-6 text-emerald-600" />
-            Plant Health Analysis
-          </h1>
+          <div className="w-full relative py-4">
+            <h1 className="text-2xl font-bold text-emerald-800 flex items-center justify-center gap-2">
+              <Leaf className="h-6 w-6 text-emerald-600" />
+              Plant Health Analysis
+            </h1>
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-emerald-800">
+              <Select value={language} onValueChange={handleLanguageChange}>
+                <SelectTrigger className="w-[120px] bg-white text-emerald-800">
+                  <SelectValue placeholder="Language" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="english">English</SelectItem>
+                  <SelectItem value="hindi">Hindi</SelectItem>
+                  <SelectItem value="gujarati">Gujarati</SelectItem>
+                  <SelectItem value="marathi">Marathi</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Upload Section */}
           <Card className="bg-white shadow-md border-emerald-100">
             <CardHeader className="text-center">
-              <CardTitle className="text-emerald-700">Upload Plant Image</CardTitle>
+              <CardTitle className="text-emerald-700">
+                Upload Plant Image
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
                 {/* Upload Area */}
-                <div 
+                <div
                   className="border-2 border-dashed border-emerald-200 rounded-xl p-8 text-center
                             hover:border-emerald-400 hover:bg-emerald-50 transition-all duration-300
                             cursor-pointer relative"
@@ -146,12 +195,12 @@ const MedicalImageAnalysis = () => {
                   disabled={!selectedFile || loading}
                   className={`w-full py-3 px-4 rounded-lg text-white font-medium shadow-sm
                             transition-all duration-300 ${
-                    !selectedFile || loading
-                      ? 'bg-emerald-300 cursor-not-allowed'
-                      : 'bg-emerald-500 hover:bg-emerald-600 hover:shadow-md'
-                  }`}
+                              !selectedFile || loading
+                                ? "bg-emerald-300 cursor-not-allowed"
+                                : "bg-emerald-500 hover:bg-emerald-600 hover:shadow-md"
+                            }`}
                 >
-                  {loading ? 'Analyzing...' : 'Analyze Plant'}
+                  {loading ? "Analyzing..." : "Analyze Plant"}
                 </button>
 
                 {error && (
@@ -168,7 +217,9 @@ const MedicalImageAnalysis = () => {
           {/* Results Section */}
           <Card className="bg-white shadow-md border-emerald-100">
             <CardHeader className="text-center">
-              <CardTitle className="text-emerald-700">Analysis Results</CardTitle>
+              <CardTitle className="text-emerald-700">
+                Analysis Results
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="bg-gradient-to-b from-emerald-50 to-white rounded-lg h-[400px] flex flex-col border border-emerald-100">
@@ -182,22 +233,32 @@ const MedicalImageAnalysis = () => {
                       <div
                         key={index}
                         className={`flex items-start gap-3 ${
-                          message.type === 'bot' ? 'flex-row' : 'flex-row-reverse'
+                          message.type === "bot"
+                            ? "flex-row"
+                            : "flex-row-reverse"
                         }`}
                       >
-                        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center
-                                      ${message.type === 'bot' ? 'bg-emerald-100' : 'bg-emerald-500'}`}>
-                          {message.type === 'bot' ? (
+                        <div
+                          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center
+                                      ${
+                                        message.type === "bot"
+                                          ? "bg-emerald-100"
+                                          : "bg-emerald-500"
+                                      }`}
+                        >
+                          {message.type === "bot" ? (
                             <Leaf className="h-5 w-5 text-emerald-600" />
                           ) : (
                             <User className="h-5 w-5 text-white" />
                           )}
                         </div>
-                        <div className={`max-w-[80%] p-3 rounded-lg shadow-sm ${
-                          message.type === 'bot' 
-                            ? 'bg-white border border-emerald-100 text-emerald-800' 
-                            : 'bg-emerald-500 text-white'
-                        }`}>
+                        <div
+                          className={`max-w-[80%] p-3 rounded-lg shadow-sm ${
+                            message.type === "bot"
+                              ? "bg-white border border-emerald-100 text-emerald-800"
+                              : "bg-emerald-500 text-white"
+                          }`}
+                        >
                           <pre className="whitespace-pre-wrap font-sans text-sm">
                             {message.content}
                           </pre>
