@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { DashIcon } from "@radix-ui/react-icons";
 import Dashboard from "./pages/Homepage/Dashboard";
 import ChatbotUI from "./pages/chatbot";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -23,7 +22,7 @@ function Navbar() {
   const navigate = useNavigate(); // Initialize useNavigate hook at the top level
   const navRef = useRef(null);
   const navItems = [
-    { label: "Home", path: "/", icon: CloudSunRain },
+    { label: "Home", path: "/dashboard", icon: CloudSunRain },
     { label: "Chatbot", path: "/bot", icon: Bot },
     { label: "Diseases", path: "/diseases", icon: Sprout },
     { label: "Yield", path: "/yield", icon: Crop },
@@ -180,7 +179,7 @@ function Navbar() {
       >
         <main>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/bot" element={<ChatbotUI />} />
             <Route
               path="/yield"
