@@ -25,8 +25,6 @@ import CropRecommend from "./pages/CropRecommendation/CropRecommend";
 import { FarmAnalytics } from "./pages/Contacts/Contact";
 import FertilizerRecommend from "./pages/FertilizerRecommend/FertilizerRecommend";
 import YieldPredict from "./pages/YieldPrediction/YieldPredict";
-// import FarmAnalytics from "./pages/Contacts/Contact";
-
 function Navbar() {
   const navigate = useNavigate(); // Initialize useNavigate hook at the top level
   const navRef = useRef(null);
