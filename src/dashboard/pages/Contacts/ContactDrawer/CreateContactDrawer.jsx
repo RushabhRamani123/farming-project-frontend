@@ -4,225 +4,363 @@ import * as z from "zod";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { useContactStore } from '../../../../app/contactStore';
-import { countryCodes } from '../../../../../data';
-
-
+import { useCropStore } from '../../../../app/contactStore';
 const formSchema = z.object({
-  name: z.string().min(1, { message: "Name is required" }),
-  phoneCode: z.string(),
-  phoneNumber: z.string().regex(/^\d+$/, "Phone number should only contain digits"),
-  marketingOptIn: z.boolean(),
-  email: z.string().email({ message: "Invalid email address" }).optional().or(z.literal('')),
-  tags: z.array(z.object({ value: z.string() })),
-  companyTags: z.array(z.object({ value: z.string() })),
+  crop: z.object({
+    name: z.string().min(1, { message: "Crop name is required" }),
+    qnt: z.string().regex(/^\d+$/, "Quantity should only contain digits")
+  }),
+  sold_at: z.string().regex(/^\d+$/, "Selling price should only contain digits"),
+  expense: z.object({
+    seeds: z.string().regex(/^\d+$/, "Seed cost should only contain digits"),
+    fertilizers: z.array(z.object({
+      name: z.string().min(1, { message: "Fertilizer name is required" }),
+      cost: z.string().regex(/^\d+$/, "Cost should only contain digits")
+    })),
+    electricity: z.string().regex(/^\d+$/, "Electricity cost should only contain digits"),
+    machinery: z.string().regex(/^\d+$/, "Machinery cost should only contain digits"),
+    labor: z.string().regex(/^\d+$/, "Labor cost should only contain digits"),
+    water_usage: z.string().regex(/^\d+$/, "Water usage cost should only contain digits"),
+    storage: z.string().regex(/^\d+$/, "Storage cost should only contain digits"),
+    transport: z.string().regex(/^\d+$/, "Transport cost should only contain digits"),
+    pesticides: z.array(z.object({
+      name: z.string().min(1, { message: "Pesticide name is required" }),
+      cost: z.string().regex(/^\d+$/, "Cost should only contain digits")
+    }))
+  })
 });
 
-
-const CreateContactDrawer = ({ isOpen, onClose }) => {
-  const addContact = useContactStore((state) => state.addContact);
-
+const CreateCropForm = ({ isOpen, onClose }) => {
+  const addCrop = useCropStore((state) => state.addContact);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      phoneCode: '+1',
-      phoneNumber: '',
-      marketingOptIn: false,
-      email: '',
-      tags: [{ value: '' }],
-      companyTags: [{ value: '' }],
+      crop: {
+        name: '',
+        qnt: ''
+      },
+      sold_at: '',
+      expense: {
+        seeds: '',
+        fertilizers: [{ name: '', cost: '' }],
+        electricity: '',
+        machinery: '',
+        labor: '',
+        water_usage: '',
+        storage: '',
+        transport: '',
+        pesticides: [{ name: '', cost: '' }]
+      }
     },
   });
 
-  const { fields: tagFields, append: appendTag, remove: removeTag } = useFieldArray({
+  const { fields: fertilizerFields, append: appendFertilizer, remove: removeFertilizer } = useFieldArray({
     control: form.control,
-    name: "tags",
+    name: "expense.fertilizers"
   });
-  
-  const { fields: companyTagFields, append: appendCompanyTag, remove: removeCompanyTag } = useFieldArray({
+
+  const { fields: pesticideFields, append: appendPesticide, remove: removePesticide } = useFieldArray({
     control: form.control,
-    name: "companyTags",
+    name: "expense.pesticides"
   });
 
   const onSubmit = (data) => {
-    addContact({
-      name: data.name,
-      phone: data.phoneNumber,
-      phoneCode: data.phoneCode,
-      email: data.email || '',
-      createdAt: new Date().toISOString().split('T')[0],
-      companyTags: data.companyTags.map(tag => tag.value).filter(tag => tag.trim() !== ''),
-      tags: data.tags.map(tag => tag.value).filter(tag => tag.trim() !== ''),
+    // Convert string values to numbers for numerical fields
+    const formattedData = {
+      crop: {
+        name: data.crop.name,
+        qnt: data.crop.qnt
+      },
+      sold_at: parseInt(data.sold_at),
+      expense: {
+        seeds: parseInt(data.expense.seeds),
+        fertilizers: data.expense.fertilizers.map(f => ({
+          name: f.name,
+          cost: parseInt(f.cost)
+        })),
+        electricity: parseInt(data.expense.electricity),
+        machinery: parseInt(data.expense.machinery),
+        labor: parseInt(data.expense.labor),
+        water_usage: parseInt(data.expense.water_usage),
+        storage: parseInt(data.expense.storage),
+        transport: parseInt(data.expense.transport),
+        pesticides: data.expense.pesticides.map(p => ({
+          name: p.name,
+          cost: parseInt(p.cost)
+        }))
+      }
+    };
+    console.log(formattedData);
+    addCrop({
+      crop: {
+        name: data.crop.name,
+        qnt: data.crop.qnt
+      },
+      sold_at: parseInt(data.sold_at),
+      expense: {
+        seeds: parseInt(data.expense.seeds),
+        fertilizers: data.expense.fertilizers.map(f => ({
+          name: f.name,
+          cost: parseInt(f.cost)
+        })),
+        electricity: parseInt(data.expense.electricity),
+        machinery: parseInt(data.expense.machinery),
+        labor: parseInt(data.expense.labor),
+        water_usage: parseInt(data.expense.water_usage),
+        storage: parseInt(data.expense.storage),
+        transport: parseInt(data.expense.transport),
+        pesticides: data.expense.pesticides.map(p => ({
+          name: p.name,
+          cost: parseInt(p.cost)
+        }))
+      }
     });
-
-    console.log('Contact added:', data);
     form.reset();
     onClose();
   };
 
-
-  return (  
+  return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent>
+      <SheetContent className="overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Create Contact</SheetTitle>
+          <SheetTitle>Add New Crop</SheetTitle>
         </SheetHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter the name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-<div className="flex space-x-4">
-    <FormField
-      control={form.control}
-      name="phoneCode"
-      render={({ field }) => (
-        <FormItem className="flex-shrink-0 w-1/3">
-          <Select onValueChange={field.onChange} defaultValue={field.value}>
-            <FormControl>
-              <SelectTrigger>
-                <SelectValue placeholder="Code" />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent>
-              {countryCodes.map(({ code, country }) => (
-                <SelectItem key={country} value={code}>
-                  {country} ({code})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
+            {/* Crop Details */}
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="crop.name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Crop Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter crop name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="crop.qnt"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Quantity</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter quantity" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="sold_at"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Selling Price</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter selling price" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-    <FormField
-      control={form.control}
-      name="phoneNumber"
-      render={({ field }) => (
-        <FormItem className="flex-grow">
-          <FormControl>
-            <Input placeholder="Enter phone number" {...field} />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-  </div>
-            <FormField
-              control={form.control}
-              name="marketingOptIn"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                  <FormControl>
-                    <input
-                      type="checkbox"
-                      checked={field.value}
-                      onChange={field.onChange}
+            {/* Expenses */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Expenses</h3>
+              
+              <FormField
+                control={form.control}
+                name="expense.seeds"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Seeds Cost</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter seeds cost" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Fertilizers */}
+              <div className="space-y-2">
+                <FormLabel>Fertilizers</FormLabel>
+                {fertilizerFields.map((field, index) => (
+                  <div key={field.id} className="flex space-x-2">
+                    <FormField
+                      control={form.control}
+                      name={`expense.fertilizers.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input placeholder="Fertilizer name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      Marketing Opt-In
-                    </FormLabel>
-                    <p className="text-sm text-muted-foreground">
-                      You agree to receive marketing communications from us.
-                    </p>
+                    <FormField
+                      control={form.control}
+                      name={`expense.fertilizers.${index}.cost`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input placeholder="Cost" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="button" variant="outline" onClick={() => removeFertilizer(index)}>
+                      Remove
+                    </Button>
                   </div>
-                </FormItem>
-              )}
-            />
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => appendFertilizer({ name: '', cost: '' })}
+                >
+                  Add Fertilizer
+                </Button>
+              </div>
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              {/* Other Expenses */}
+              <FormField
+                control={form.control}
+                name="expense.electricity"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Electricity Cost</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter electricity cost" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            
-<div>
-              <FormLabel>Tags</FormLabel>
-              {tagFields.map((field, index) => (
-                <FormField
-                  control={form.control}
-                  key={field.id}
-                  name={`tags.${index}.value`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Input {...field} placeholder="Contact Tag" />
-                          <Button type="button" variant="outline" onClick={() => removeTag(index)}>
-                            Remove
-                          </Button>
-                        </div>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              ))}
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => appendTag({ value: '' })}
-                className="mt-2"
-              >
-                Add Tag
-              </Button>
+              <FormField
+                control={form.control}
+                name="expense.machinery"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Machinery Cost</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter machinery cost" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="expense.labor"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Labor Cost</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter labor cost" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="expense.water_usage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Water Usage Cost</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter water usage cost" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="expense.storage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Storage Cost</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter storage cost" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="expense.transport"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Transport Cost</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter transport cost" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Pesticides */}
+              <div className="space-y-2">
+                <FormLabel>Pesticides</FormLabel>
+                {pesticideFields.map((field, index) => (
+                  <div key={field.id} className="flex space-x-2">
+                    <FormField
+                      control={form.control}
+                      name={`expense.pesticides.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input placeholder="Pesticide name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`expense.pesticides.${index}.cost`}
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormControl>
+                            <Input placeholder="Cost" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="button" variant="outline" onClick={() => removePesticide(index)}>
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => appendPesticide({ name: '', cost: '' })}
+                >
+                  Add Pesticide
+                </Button>
+              </div>
             </div>
 
-            <div>
-              <FormLabel>Company Tags</FormLabel>
-              {companyTagFields.map((field, index) => (
-                <FormField
-                  control={form.control}
-                  key={field.id}
-                  name={`companyTags.${index}.value`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Input {...field} placeholder="Company Tag" />
-                          <Button type="button" variant="outline" onClick={() => removeCompanyTag(index)}>
-                            Remove
-                          </Button>
-                        </div>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              ))}
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => appendCompanyTag({ value: '' })}
-                className="mt-2"
-              >
-                Add Company Tag
-              </Button>
-            </div>
             <div className="pt-4 space-x-2 flex justify-end">
               <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
               <Button type="submit" className="bg-blue-500 text-white">Submit</Button>
@@ -234,4 +372,4 @@ const CreateContactDrawer = ({ isOpen, onClose }) => {
   );
 };
 
-export default CreateContactDrawer;
+export default CreateCropForm;

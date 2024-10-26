@@ -20,7 +20,8 @@ import { CloudSunRain } from "lucide-react";
 import { Sprout } from "lucide-react";
 import MedicalImageAnalysis from "./pages/diseasesDetection";
 import CropRecommend from "./pages/CropRecommendation/CropRecommend";
-import ContactsPage from "./pages/Contacts/Contact";
+import { FarmAnalytics } from "./pages/Contacts/Contact";
+// import FarmAnalytics from "./pages/Contacts/Contact";
 function Navbar() {
   const navigate = useNavigate(); // Initialize useNavigate hook at the top level
   const navRef = useRef(null);
@@ -205,7 +206,7 @@ function Navbar() {
             <Route path="/diseases" element={<MedicalImageAnalysis />} />
             <Route path="/profile" element={<FarmerProfile />} />
             <Route path="/crop-recommendation" element={<CropRecommend />} />
-            <Route path="/inventory" element={<ContactsPage />} />
+            <Route path="/inventory" element={<FarmAnalytics />} />
           </Routes>
         </main>
       </ScrollArea>
