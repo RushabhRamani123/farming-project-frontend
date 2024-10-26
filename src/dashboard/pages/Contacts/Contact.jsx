@@ -550,8 +550,8 @@ export const FarmAnalytics = () => {
               </div>
             </DialogContent>
           </Dialog>
-          <Button variant="outline">Export Data</Button>
-          <Button variant="outline">Generate Report</Button>
+          {/* <Button variant="outline">Export Data</Button>
+          <Button variant="outline">Generate Report</Button> */}
         </div>
       </div>
 

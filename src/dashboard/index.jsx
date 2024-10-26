@@ -21,6 +21,8 @@ import { Sprout } from "lucide-react";
 import MedicalImageAnalysis from "./pages/diseasesDetection";
 import CropRecommend from "./pages/CropRecommendation/CropRecommend";
 import { FarmAnalytics } from "./pages/Contacts/Contact";
+import FertilizerRecommend from "./pages/FertilizerRecommend/FertilizerRecommend";
+import YieldPredict from "./pages/YieldPrediction/YieldPredict";
 // import FarmAnalytics from "./pages/Contacts/Contact";
 function Navbar() {
   const navigate = useNavigate(); // Initialize useNavigate hook at the top level
@@ -195,14 +197,8 @@ function Navbar() {
           <Routes>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/bot" element={<ChatbotUI />} />
-            <Route
-              path="/yield"
-              element={<div className="p-6">Yield Page</div>}
-            />
-            <Route
-              path="/fertilizers"
-              element={<div className="p-6">Fertilizers Page</div>}
-            />
+            <Route path="/yield" element={<YieldPredict />} />
+            <Route path="/fertilizers" element={<FertilizerRecommend />} />
             <Route path="/diseases" element={<MedicalImageAnalysis />} />
             <Route path="/profile" element={<FarmerProfile />} />
             <Route path="/crop-recommendation" element={<CropRecommend />} />
