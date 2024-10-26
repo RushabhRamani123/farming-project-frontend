@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import Navbar from "./components/Navbar";
+// import Navbar from "./components/Navbar";
 import {HeroScrollDemo} from "./components/Herosection";
 import Service from "./components/Service";
 import Testimonial from "./components/Testimonial";
+import Test from "./components/Navbar";
 
 function Homepage() {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ function Homepage() {
       {/* <Button onClick={handleLoginClick}>Login</Button> */}
 
       {/* navbar */}
-      <Navbar  handleLoginClick={handleLoginClick}/>
+      <Test />
       {/* section for the soil */}
       <Service /> 
       {/* herosection narrating aabout the dashboard */}

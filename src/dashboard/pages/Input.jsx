@@ -179,7 +179,7 @@ const EnhancedSearchInput = ({sendDataToParent}) => {
                        focus:outline-none focus:ring-2
                        hover:border-green-200 hover:shadow-md
                        disabled:bg-gray-50 disabled:cursor-not-allowed`}
-              placeholder={'dg'}
+              placeholder={'Ask yout Question?'}
               value={displayValue}
               onChange={handleInputChange}
               disabled={isLoading}

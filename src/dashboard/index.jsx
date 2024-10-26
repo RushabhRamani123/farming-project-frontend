@@ -9,6 +9,8 @@ import {
   User,
   Power,
   Warehouse,
+  VeganIcon,
+  WheatIcon,
 } from "lucide-react";
 import { Route, Routes, Link, useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -24,6 +26,7 @@ import { FarmAnalytics } from "./pages/Contacts/Contact";
 import FertilizerRecommend from "./pages/FertilizerRecommend/FertilizerRecommend";
 import YieldPredict from "./pages/YieldPrediction/YieldPredict";
 // import FarmAnalytics from "./pages/Contacts/Contact";
+
 function Navbar() {
   const navigate = useNavigate(); // Initialize useNavigate hook at the top level
   const navRef = useRef(null);
@@ -31,12 +34,12 @@ function Navbar() {
     { label: "Home", path: "/dashboard", icon: CloudSunRain },
     { label: "Chatbot", path: "/bot", icon: Bot },
     { label: "Diseases", path: "/diseases", icon: Sprout },
-    { label: "Yield", path: "/yield", icon: Crop },
-    { label: "Fertilizers", path: "/fertilizers", icon: Flashlight },
+    { label: "Yield", path: "/yield", icon: WheatIcon },
+    { label: "Fertilizers", path: "/fertilizers", icon:Crop},
     {
       label: "Crop Recommendation",
       path: "/crop-recommendation",
-      icon: Flashlight,
+      icon: VeganIcon,
     },
     {
       label: "Inventory",
@@ -88,7 +91,7 @@ function Navbar() {
         {/* Logo */}
         <div className="flex-shrink-0 flex items-center justify-center h-16 border-b border-gray-200">
           <div className="h-10 w-10 bg-green-200 rounded-md border border-green-300 flex items-center justify-center">
-            <span className="text-green-800 font-bold text-lg">L</span>
+            <span className="text-green-800 font-bold text-lg">A</span>
           </div>
         </div>
 

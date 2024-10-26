@@ -20,6 +20,170 @@ export const cities = [
   { value: "1269515", label: "Gurgaon" },
   { value: "1256237", label: "Kanpur" },
 ];
+export const cropdata = [
+  {
+    "crop": {
+      "name": "Rice",
+      "qnt": "30"
+    },
+    "sold_at": 3200,
+    "expense": {
+      "seeds": 600,
+      "fertilizers": [
+        {
+          "name": "DAP",
+          "cost": 350
+        },
+        {
+          "name": "Potash",
+          "cost": 270
+        }
+      ],
+      "electricity": 500,
+      "machinery": 900,
+      "labor": 600,
+      "water_usage": 1100,
+      "storage": 400,
+      "transport": 500,
+      "pesticides": [
+        {
+          "name": "Chlorpyrifos",
+          "cost": 200
+        }
+      ]
+    }
+  },
+  {
+    "crop": {
+      "name": "Barley",
+      "qnt": "15"
+    },
+    "sold_at": 2100,
+    "expense": {
+      "seeds": 450,
+      "fertilizers": [
+        {
+          "name": "Urea",
+          "cost": 280
+        },
+        {
+          "name": "Ammonium Nitrate",
+          "cost": 300
+        }
+      ],
+      "electricity": 450,
+      "machinery": 850,
+      "labor": 500,
+      "water_usage": 1050,
+      "storage": 300,
+      "transport": 400,
+      "pesticides": [
+        {
+          "name": "Malathion",
+          "cost": 180
+        }
+      ]
+    }
+  },
+  {
+    "crop": {
+      "name": "Maize",
+      "qnt": "25"
+    },
+    "sold_at": 2900,
+    "expense": {
+      "seeds": 550,
+      "fertilizers": [
+        {
+          "name": "NPK",
+          "cost": 320
+        },
+        {
+          "name": "Sulphate",
+          "cost": 260
+        }
+      ],
+      "electricity": 470,
+      "machinery": 900,
+      "labor": 620,
+      "water_usage": 1150,
+      "storage": 450,
+      "transport": 420,
+      "pesticides": [
+        {
+          "name": "Permethrin",
+          "cost": 160
+        }
+      ]
+    }
+  },
+  {
+    "crop": {
+      "name": "Soybean",
+      "qnt": "18"
+    },
+    "sold_at": 3400,
+    "expense": {
+      "seeds": 650,
+      "fertilizers": [
+        {
+          "name": "Phosphorus",
+          "cost": 310
+        },
+        {
+          "name": "Ammonium Sulfate",
+          "cost": 290
+        }
+      ],
+      "electricity": 490,
+      "machinery": 920,
+      "labor": 570,
+      "water_usage": 1250,
+      "storage": 380,
+      "transport": 430,
+      "pesticides": [
+        {
+          "name": "Cypermethrin",
+          "cost": 175
+        }
+      ]
+    }
+  },
+  {
+    "crop": {
+      "name": "Oats",
+      "qnt": "20"
+    },
+    "sold_at": 2800,
+    "expense": {
+      "seeds": 500,
+      "fertilizers": [
+        {
+          "name": "Nitrogen",
+          "cost": 270
+        },
+        {
+          "name": "Lime",
+          "cost": 250
+        }
+      ],
+      "electricity": 430,
+      "machinery": 890,
+      "labor": 560,
+      "water_usage": 1120,
+      "storage": 360,
+      "transport": 410,
+      "pesticides": [
+        {
+          "name": "Lambda-Cyhalothrin",
+          "cost": 140
+        }
+      ]
+    }
+  }
+];
+
+
 export const countryCodes = [
   { code: "+1", country: "🇺🇸 United States" },
   { code: "+44", country: "🇬🇧 United Kingdom" },
