@@ -6,11 +6,7 @@ import Testimonial from "./components/Testimonial";
 import Test from "./components/Navbar";
 
 function Homepage() {
-  const navigate = useNavigate();
 
-  const handleLoginClick = () => {
-    navigate("/auth");
-  };
 
   return (
     <div>
@@ -23,7 +19,7 @@ function Homepage() {
       {/* herosection narrating aabout the dashboard */}
       <HeroScrollDemo />
       {/* create the testimonial  */}
-      <Testimonial handleLoginClick={handleLoginClick} />       
+      <Testimonial  />       
       {/* create the pricing section */}
     </div>
   );

@@ -44,6 +44,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import Typewriter from "typewriter-effect";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 function Model() {
   const { scene } = useGLTF("/model/scene.gltf");
@@ -57,11 +58,18 @@ function Model() {
         Math.sin(clock.getElapsedTime() * speed) * amplitude;
     }
   });
+  
 
   return <primitive object={scene} ref={modelRef} scale={0.5} />;
 }
 
-function Test({handleLoginClick}) {
+function Test() {
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    console.log('hello')
+    navigate("/auth");
+  };
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-green-700 via-green-500 to-emerald-200">
       <div className="container mx-auto px-4">
@@ -132,14 +140,7 @@ function Test({handleLoginClick}) {
                   and data-driven insights.
                 </p>
 
-                <div className="flex flex-wrap gap-4">
-                  <button className="px-8 py-4 bg-white text-green-700 rounded-xl hover:bg-emerald-100 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold">
-                    Start Free Trial
-                  </button>
-                  <button className="px-8 py-4 border-2 border-white text-white rounded-xl hover:bg-white/10 transition-all duration-300 font-semibold">
-                    Watch Demo
-                  </button>
-                </div>
+                
               </div>
 
               <div className="grid grid-cols-3 gap-4 mt-8">
