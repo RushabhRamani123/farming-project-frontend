@@ -43,14 +43,14 @@ import React, { useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import Typewriter from "typewriter-effect";
+import { motion } from "framer-motion";
 
 function Model() {
   const { scene } = useGLTF("/model/scene.gltf");
   const modelRef = useRef();
-  const speed = 3; // Speed of the animation
-  const amplitude = 0.5; // Adjust this value to control the y-axis movement range
+  const speed = 3;
+  const amplitude = 0.5;
 
-  // Animation loop
   useFrame(({ clock }) => {
     if (modelRef.current) {
       modelRef.current.position.y =
@@ -61,51 +61,136 @@ function Model() {
   return <primitive object={scene} ref={modelRef} scale={0.5} />;
 }
 
-function Test() {
+function Test({handleLoginClick}) {
   return (
-    <div className="flex h-screen w-full ">
-      {/* Text Section */}
-      <div className="flex-1  flex flex-col justify-center p-4">
-        <h1 className=" text-2xl font-bold">AgriSmart</h1>
-        <Typewriter
-          options={{
-            strings: [
-              "Hello, World!",
-              "Welcome to AgriSmart.",
-              "Innovating Agriculture.",
-              "Grow Smart, Grow Green.",
-              "Your Farming Partner.",
-            ],
-            autoStart: true,
-            loop: true,
-            deleteSpeed: 100, // Speed at which the text is deleted
-          }}
-        />
-      </div>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-green-700 via-green-500 to-emerald-200">
+      <div className="container mx-auto px-4">
+        <nav className="py-6">
+          <div className="flex items-center justify-between">
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-2xl font-bold text-white"
+            >
+              🌾 AgriSmart
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              className="flex space-x-4"
+            >
+             
+              <button onClick={handleLoginClick}className="px-4 py-2 bg-white text-green-700 rounded-lg hover:bg-emerald-100 transition-colors">
+                Sign In
+              </button>
+            </motion.div>
+          </div>
+        </nav>
 
-      {/* 3D Model Section */}
-      <div className="flex-1 bg-gradient-to-br from-green-500 via-green-600 to-white">
-        <Canvas
-          camera={{
-            position: [150, 40, -90], // Adjust position to move camera further back
-            fov: 45, // Field of view - reduce for less zoom
-          }}
-          style={{ background: "transparent" }} // Keep this for transparency
-        >
-          <ambientLight intensity={0.5} />
-          <directionalLight
-            position={[2, 2, 2]}
-            intensity={1} // Increase intensity for better visibility
-            castShadow // Enable shadows if needed
-          />
-          <Model />
-          <OrbitControls
-            enableZoom={false}
-            enablePan={false}
-            maxPolarAngle={Math.PI / 2.11}
-            minPolarAngle={Math.PI / 3}
-          />
-        </Canvas>
+        <div className="flex flex-col lg:flex-row items-center min-h-[calc(100vh-88px)] gap-12">
+          {/* Left Content Section */}
+          <div className="w-full lg:w-1/2">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="space-y-8"
+            >
+              <div className="p-6 bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 shadow-xl">
+                <h1 className="text-5xl lg:text-7xl font-bold text-white mb-6">
+                  The Future of Farming
+                </h1>
+                
+                <div className="h-24 flex items-center">
+                  <div className="text-xl lg:text-2xl text-emerald-100">
+                    <Typewriter
+                      options={{
+                        strings: [
+                          "AI-Powered Crop Management",
+                          "Real-time Weather Monitoring",
+                          "Smart Irrigation Systems",
+                          "Precision Agriculture Tools",
+                          "Sustainable Farming Solutions",
+                        ],
+                        autoStart: true,
+                        loop: true,
+                        deleteSpeed: 50,
+                        delay: 80,
+                        cursor: '|',
+                        wrapperClassName: "text-emerald-100",
+                        cursorClassName: "text-emerald-200",
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <p className="text-emerald-100 text-lg max-w-xl mb-8">
+                  Join thousands of farmers worldwide who are revolutionizing 
+                  their agricultural practices with cutting-edge technology 
+                  and data-driven insights.
+                </p>
+
+                <div className="flex flex-wrap gap-4">
+                  <button className="px-8 py-4 bg-white text-green-700 rounded-xl hover:bg-emerald-100 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold">
+                    Start Free Trial
+                  </button>
+                  <button className="px-8 py-4 border-2 border-white text-white rounded-xl hover:bg-white/10 transition-all duration-300 font-semibold">
+                    Watch Demo
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 mt-8">
+                <div className="p-4 bg-white/10 backdrop-blur-lg rounded-xl border border-white/20">
+                  <div className="text-3xl font-bold text-white">98%</div>
+                  <div className="text-emerald-100">Accuracy Rate</div>
+                </div>
+                <div className="p-4 bg-white/10 backdrop-blur-lg rounded-xl border border-white/20">
+                  <div className="text-3xl font-bold text-white">10k+</div>
+                  <div className="text-emerald-100">Active Farms</div>
+                </div>
+                <div className="p-4 bg-white/10 backdrop-blur-lg rounded-xl border border-white/20">
+                  <div className="text-3xl font-bold text-white">35%</div>
+                  <div className="text-emerald-100">Water Saved</div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Right 3D Model Section */}
+          <div className="w-full h-[1000px]">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              className="w-full h-full rounded-3xl overflow-hidden"
+            >
+              <Canvas
+                camera={{
+                  position: [150, 40, -90],
+                  fov: 45,
+                }}
+                style={{ background: 'transparent' }}
+              >
+                <ambientLight intensity={0.6} />
+                <directionalLight
+                  position={[2, 2, 2]}
+                  intensity={1.2}
+                  castShadow
+                />
+                <Model />
+                <OrbitControls
+                  enableZoom={false}
+                  enablePan={false}
+                  maxPolarAngle={Math.PI / 2.11}
+                  minPolarAngle={Math.PI / 3}
+                />
+              </Canvas>
+            </motion.div>
+          </div>
+        </div>
       </div>
     </div>
   );

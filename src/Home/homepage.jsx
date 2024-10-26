@@ -23,7 +23,7 @@ function Homepage() {
       {/* herosection narrating aabout the dashboard */}
       <HeroScrollDemo />
       {/* create the testimonial  */}
-      <Testimonial />       
+      <Testimonial handleLoginClick={handleLoginClick} />       
       {/* create the pricing section */}
     </div>
   );
